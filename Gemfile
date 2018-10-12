@@ -13,4 +13,5 @@ group :development, :test do
   gem "rspec"
   gem "rubocop"
   gem "yard"
+  gem "byebug"
 end

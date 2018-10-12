@@ -67,7 +67,13 @@ module Pundit
     def authorize(user, record, query, policy_class: nil)
       policy = policy_class ? policy_class.new(user, record) : policy!(user, record)
 
-      raise NotAuthorizedError, query: query, record: record, policy: policy unless policy.public_send(query)
+      raise(
+        NotAuthorizedError, 
+        query: query, 
+        record: record, 
+        policy: policy, 
+        context: policy.try(:error_context)
+      ) unless policy.public_send(query)
 
       record
     end
@@ -218,7 +224,13 @@ protected
 
     policy = policy_class ? policy_class.new(pundit_user, record) : policy(record)
 
-    raise NotAuthorizedError, query: query, record: record, policy: policy unless policy.public_send(query)
+    raise(
+      NotAuthorizedError, 
+      query: query, 
+      record: record, 
+      context: policy.try(:context),
+      policy: policy
+    ) unless policy.public_send(query)
 
     record
   end
